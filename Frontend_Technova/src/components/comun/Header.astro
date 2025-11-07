@@ -1,0 +1,286 @@
+---
+const categorias = ['Teclados', 'Mouse', 'Monitores', 'Sillas Gamer', 'Auriculares'];
+---
+
+<header class="bg-gray-900 text-white shadow-lg sticky top-0 z-50">
+  <div class="mx-auto px-4 py-3">
+    <!-- Contenedor principal -->
+    <div class="flex justify-between items-center">
+      <!-- Logo -->
+      <a href="/" class="text-2xl font-bold flex items-center gap-2">
+        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_5tkzkblw.json" background="transparent" speed="1" style="width: 40px; height: 40px;" loop autoplay></lottie-player>
+        <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">GamerTech</span>
+      </a>
+      
+      <!-- Menú desktop (oculto en móvil) -->
+      <nav class="hidden md:block">
+        <ul class="flex space-x-6">
+          <li>
+            <a href="/" class="hover:text-blue-400 transition-all duration-300 flex items-center gap-1">
+              <i class="fas fa-home text-sm"></i> Inicio
+            </a>
+          </li>
+          <li class="relative group">
+            <a href="/productos/todos" class="hover:text-blue-400 transition-all duration-300 flex items-center gap-1">
+              <i class="fas fa-gamepad text-sm"></i> Productos <i class="fas fa-chevron-down text-xs"></i>
+            </a>
+            <div class="absolute left-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:animate-pulse translate-y-2">
+              {categorias.map(cat => (
+                <a href={`/productos/${cat.toLowerCase().replace(/\s+/g, "-")}`} class="block px-4 py-2 text-sm hover:bg-gray-700">
+                  {cat}
+                </a>
+              ))}
+            </div>
+          </li>
+          <li>
+            <a href="#" class="hover:text-blue-400 transition-all duration-300 flex items-center gap-1">
+              <i class="fas fa-tag text-sm"></i> Ofertas
+            </a>
+          </li>
+          <li>
+            <a href="/contacto" class="hover:text-blue-400 transition-all duration-300 flex items-center gap-1">
+              <i class="fas fa-envelope text-sm"></i> Contacto
+            </a>
+          </li>
+        </ul>
+      </nav>
+      
+      <!-- Iconos de acción -->
+      <div class="flex items-center space-x-4">
+        <form id="search-form" action="/busqueda" method="get" class="flex items-center gap-2">
+          <input id="busqueda-input" name="query" autocomplete="off" type="text" placeholder="Buscar..." class="px-2 py-1 rounded-full bg-gray-800 text-white border border-blue-400 focus:border-purple-500 focus:outline-none w-52 transition-all duration-200 placeholder-gray-400 text-sm" />
+          <button type="submit" id="busqueda-btn" class="p-2 hover:text-blue-400 transition-all duration-300 relative group cursor-pointer">
+            <i class="fas fa-search"></i>
+            <span class="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-blue-400 group-hover:w-4/5 group-hover:left-1/10 transition-all duration-300"></span>
+          </button>
+        </form>
+        
+        
+        <!-- Icono del carrito mejorado -->
+        <button onclick="cart.open()" class="p-2 hover:text-blue-400 transition-all duration-300 relative group">
+          <i class="fas fa-shopping-cart"></i>
+          <!-- Contador del carrito -->
+          <span data-cart-count class="absolute -top-1 -right-1 bg-red-500 text-xs rounded-full h-5 w-5 flex items-center justify-center transition-all duration-300 transform scale-0">
+            0
+          </span>
+          <span class="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-blue-400 group-hover:w-4/5 group-hover:left-1/10 transition-all duration-300"></span>
+        </button>
+        
+        <!-- Botón hamburguesa (solo móvil) -->
+        <button id="menu-toggle" class="md:hidden p-2 hover:text-blue-400 focus:outline-none">
+          <i id="menu-icon" class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Menú móvil (oculto por defecto) -->
+    <div id="mobile-menu" class="md:hidden hidden mt-4 pb-4">
+      <ul class="space-y-3">
+        <li>
+          <a href="/" class="block px-3 py-2 hover:bg-gray-800 rounded-lg transition-all duration-300 flex items-center gap-2">
+            <i class="fas fa-home text-sm"></i> Inicio
+          </a>
+        </li>
+        <li>
+          <button id="mobile-products-toggle" class="w-full px-3 py-2 hover:bg-gray-800 rounded-lg transition-all duration-300 flex items-center justify-between">
+            <span class="flex items-center gap-2">
+              <i class="fas fa-gamepad text-sm"></i> Productos
+            </span>
+            <i class="fas fa-chevron-down text-xs transition-transform duration-300"></i>
+          </button>
+          <div id="mobile-products-menu" class="hidden pl-6 mt-2 space-y-2">
+            {categorias.map(cat => (
+              <a href={`/productos/${cat.toLowerCase().replace(/\s+/g, "-")}`} class="block px-3 py-2 text-sm hover:bg-gray-700 rounded-lg">
+                {cat}
+              </a>
+            ))}
+          </div>
+        </li>
+        <li>
+          <a href="#" class="block px-3 py-2 hover:bg-gray-800 rounded-lg transition-all duration-300 flex items-center gap-2">
+            <i class="fas fa-tag text-sm"></i> Ofertas
+          </a>
+        </li>
+        <li>
+          <a href="/contacto" class="block px-3 py-2 hover:bg-gray-800 rounded-lg transition-all duration-300 flex items-center gap-2">
+            <i class="fas fa-envelope text-sm"></i> Contacto
+          </a>
+        </li>
+        <li>
+          <button onclick="cart.open()" class="w-full px-3 py-2 hover:bg-gray-800 rounded-lg transition-all duration-300 flex items-center gap-2">
+            <i class="fas fa-shopping-cart text-sm"></i> 
+            Carrito (<span data-cart-count>0</span>)
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<!-- Script para el menú hamburguesa y carrito -->
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    const productsToggle = document.getElementById('mobile-products-toggle');
+    const productsMenu = document.getElementById('mobile-products-menu');
+    
+    // Toggle del menú principal
+    menuToggle.addEventListener('click', function() {
+      mobileMenu.classList.toggle('hidden');
+      menuIcon.classList.toggle('fa-bars');
+      menuIcon.classList.toggle('fa-times');
+    });
+    
+    // Toggle del submenú de productos
+    if (productsToggle && productsMenu) {
+      productsToggle.addEventListener('click', function() {
+        productsMenu.classList.toggle('hidden');
+        const icon = this.querySelector('.fa-chevron-down');
+        icon.classList.toggle('rotate-180');
+      });
+    }
+    
+    // Cerrar menú al hacer clic en un enlace
+    const mobileLinks = mobileMenu.querySelectorAll('a');
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        menuIcon.classList.remove('fa-times');
+        menuIcon.classList.add('fa-bars');
+      });
+    });
+
+    // Función para actualizar la visibilidad del contador
+    function updateCartBadge() {
+      const badges = document.querySelectorAll('[data-cart-count]');
+      badges.forEach(badge => {
+        const count = parseInt(badge.textContent) || 0;
+        if (count > 0) {
+          badge.classList.remove('scale-0');
+          badge.classList.add('scale-100');
+        } else {
+          badge.classList.remove('scale-100');
+          badge.classList.add('scale-0');
+        }
+      });
+    }
+
+    // Observar cambios en el contador del carrito
+    const observer = new MutationObserver(updateCartBadge);
+    document.querySelectorAll('[data-cart-count]').forEach(element => {
+      observer.observe(element, { childList: true, subtree: true });
+    });
+
+    // Inicializar la visibilidad del contador
+    updateCartBadge();
+  });
+</script>
+
+<!-- Script para mantener la URL sincronizada con el input de búsqueda -->
+<script is:inline>
+  (function() {
+    function updateURLQuery(value, replace) {
+      try {
+        const url = new URL(window.location);
+        if (value && value.trim() !== '') {
+          url.searchParams.set('query', value.trim());
+        } else {
+          url.searchParams.delete('query');
+        }
+        if (replace) {
+          history.replaceState({}, '', url);
+        } else {
+          history.pushState({}, '', url);
+        }
+      } catch (e) {
+        // fallback simple
+        const base = window.location.pathname;
+        const q = value ? `?query=${encodeURIComponent(value)}` : '';
+        if (replace) {
+          window.history.replaceState({}, '', base + q);
+        } else {
+          window.history.pushState({}, '', base + q);
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('search-form');
+      const input = document.getElementById('busqueda-input');
+
+      if (!form || !input) return;
+
+      // Inicializar el valor del input desde la URL si existe
+      try {
+        const params = new URL(window.location).searchParams;
+        const q = params.get('query');
+        if (q) input.value = q;
+      } catch (e) {
+        // ignore
+      }
+
+      // Actualizar la URL en cada entrada (debounce pequeño)
+      let debounce;
+      input.addEventListener('input', function(e) {
+        window.clearTimeout(debounce);
+        const val = e.target.value;
+        debounce = window.setTimeout(() => updateURLQuery(val, true), 300);
+      });
+
+    form.addEventListener('submit', function(e) {
+  e.preventDefault(); // Evita el envío tradicional
+  const val = input.value.trim();
+  if (window.location.pathname === '/busqueda') {
+    // If we're already on /busqueda, perform in-place search via event so client-search can update results
+    const ev = new CustomEvent('search:perform', { detail: { query: val } });
+    window.dispatchEvent(ev);
+    // Update URL without reload
+    history.replaceState({}, '', val ? `/busqueda?query=${encodeURIComponent(val)}` : '/busqueda');
+  } else {
+    // Navigate to results page
+    if (val) {
+      window.location.href = `/busqueda?query=${encodeURIComponent(val)}`;
+    } else {
+      window.location.href = '/busqueda';
+    }
+  }
+});
+
+    });
+  })();
+</script>
+
+<!-- Importar el script del carrito -->
+<script type="module">
+  import '/scripts/cart.js';
+</script>
+
+<style is:global>
+  /* Animación para el icono de flecha */
+  .rotate-180 {
+    transform: rotate(180deg);
+  }
+  
+  /* Animaciones para el contador del carrito */
+  .scale-0 {
+    transform: scale(0);
+  }
+  
+  .scale-100 {
+    transform: scale(1);
+  }
+  
+  /* Mejorar la experiencia táctil en móviles */
+  @media (max-width: 767px) {
+    #mobile-menu a, #mobile-products-toggle {
+      padding: 12px 16px;
+    }
+    
+    #mobile-products-menu a {
+      padding: 10px 16px;
+    }
+  }
+</style>
+

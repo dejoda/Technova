@@ -1,0 +1,67 @@
+---
+// Este archivo se encarga de consumir la API de productos
+export interface Producto {
+    id: number;
+    nombre: string;
+    descripcion: string;
+    precio: number;
+    imagen: string;
+    categoria: string;
+    marca: string;
+    modelo?: string;
+    detalles?: any; // campo JSON (puede ser objeto o string)
+    garantia: number;
+}
+
+export async function obtenerProductos(nombre?: string) {
+    try {
+        const url = nombre
+            ? `http://localhost:8080/api/productos/buscar?nombre=${encodeURIComponent(nombre)}`
+            : "http://localhost:8080/api/productos";
+        const res = await fetch(url);
+        const data = await res.json();
+    // Important status logging kept as debug-level only during development
+
+        // Normalizar distintos formatos de respuesta:
+        // 1) Array directo -> regresar tal cual
+        if (Array.isArray(data)) {
+            // returned array
+            return data;
+        }
+
+        // 2) Strapi-like { data: [ { id, attributes: { ... } }, ... ] }
+        if (data && Array.isArray(data.data)) {
+            const mapped = data.data.map((item: any) => {
+                if (item && item.attributes) {
+                    return { id: item.id, ...item.attributes };
+                }
+                return item;
+            });
+            // strapi-style mapped
+            return mapped;
+        }
+
+        // 3) Generic object with 'results' or 'items' or 'content'
+        if (data && Array.isArray(data.results)) return data.results;
+        if (data && Array.isArray(data.items)) return data.items;
+        if (data && Array.isArray(data.content)) return data.content;
+
+        // 4) If it's an object representing a single product, wrap it in an array
+        if (data && typeof data === 'object') {
+            // If object has fields like nombre/descripcion assume it's a product
+            if (data.nombre || data.descripcion || data.precio || data.id) {
+                return [data];
+            }
+        }
+
+        // Fallback: return empty array and log
+        try { console.warn('[obtenerProductos] unexpected response shape, returning empty array', Object.keys(data || {})); } catch (e) {}
+        return [];
+    } catch (error) {
+        console.error("Error al obtener productos de la API", error);
+        return [];
+    }
+}
+---
+
+<!-- Este archivo no renderiza nada, solo expone funciones y tipos para importar en otras páginas -->

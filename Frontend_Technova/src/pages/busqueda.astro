@@ -1,0 +1,51 @@
+---
+import "../styles/global.css";
+import Layout from "../layouts/Layout.astro";
+import GridProducto from "../components/producto/GridProducto.astro";
+import { obtenerProductos } from "./productos/apiProductos.astro";
+import type { Producto } from "./productos/apiProductos.astro";
+
+const { searchParams } = Astro.url;
+const query = searchParams.get('query') || '';
+// Si query está vacío, obtenerProductos() devolverá todos los productos
+let productos: Producto[] = await obtenerProductos(query);
+// Fallback: si el backend no aplicó el filtro (devuelve todos), filtramos en el cliente
+let resultados: Producto[] = productos || [];
+if (query && resultados.length > 0) {
+  const q = query.toLowerCase();
+  const anyMatch = resultados.some(p => (p.nombre || '').toLowerCase().includes(q) || (p.descripcion || '').toLowerCase().includes(q));
+  if (!anyMatch) {
+    resultados = resultados.filter(p => (p.nombre || '').toLowerCase().includes(q) || (p.descripcion || '').toLowerCase().includes(q));
+  }
+}
+// Debug: minimal logging kept for server-side diagnostics
+
+---
+
+<Layout title={`Resultados de búsqueda: ${query}`}>
+  <main class="container mx-auto px-4 py-8 relative">
+    <div>
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <h1 class="text-3xl font-bold">Resultados de búsqueda</h1>
+        <p id="products-count" class="text-gray-600 mt-2 md:mt-0">Mostrando {resultados.length} producto{resultados.length !== 1 ? "s" : ""}</p>
+      </div>
+
+      <div id="search-results">
+        {resultados.length > 0 ? (
+          <div id="productos-container">
+            <GridProducto productos={resultados} />
+          </div>
+        ) : (
+          <div class="text-center py-12 bg-white rounded-lg shadow-sm">
+            <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_kcsr6fcp.json" background="transparent" speed="1" style="width: 200px; height: 200px; margin: 0 auto;" loop autoplay></lottie-player>
+            <h3 class="text-xl font-semibold text-gray-800 mt-4">No se encontraron productos</h3>
+            <p class="text-gray-600 mt-2 mb-6">No hay resultados para tu búsqueda.<br />Prueba con otra palabra clave o explora nuestras otras categorías.</p>
+            <a href="/productos/todos" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">Ver todos los productos</a>
+          </div>
+        )}
+      </div>
+    </div>
+  </main>
+  <script type="module" src="/scripts/client-search.js"></script>
+</Layout>
+
