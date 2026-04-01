@@ -2,6 +2,7 @@ package gm.technova.service.impl;
 
 import gm.technova.Entity.Producto;
 import gm.technova.dto.ProductoDetalleDTO;
+import gm.technova.dto.ProductopresentacionDTO;
 import gm.technova.mapper.ProductoMapper;
 import gm.technova.repository.ProductoRepository;
 import gm.technova.service.ProductoService;
@@ -60,5 +61,24 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public List<Producto> listarPorCategoria(Long idCategoria) {
         return repository.findByCategoriaIdCategoria(idCategoria);
+    }
+
+    @Override
+    public List<ProductopresentacionDTO> listarProductosPresentacion() {
+
+        return repository.findAll()
+                .stream()
+                .map(ProductoMapper::toPresentacionDTO)
+                .toList();
+    }
+
+    @Override
+    public List<ProductopresentacionDTO> filtrarProductos(String categoria, String marca, Double minPrecio, Double maxPrecio, String nombre) {
+        return repository.filtrarProductos(
+                        categoria, marca, minPrecio, maxPrecio, nombre
+                )
+                .stream()
+                .map(ProductoMapper::toPresentacionDTO)
+                .toList();
     }
 }

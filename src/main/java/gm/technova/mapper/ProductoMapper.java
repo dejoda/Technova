@@ -44,4 +44,33 @@ public class ProductoMapper {
         }
         return dto;
     }
+
+    public static ProductopresentacionDTO toPresentacionDTO(Producto producto) {
+
+        String imagenPrincipal = null;
+
+        if (producto.getImagenes() != null) {
+            imagenPrincipal = producto.getImagenes().stream()
+                    .filter(img -> Boolean.TRUE.equals(img.getPrincipal()))
+                    .map(ProductoImagen::getUrlImagen)
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        ProductopresentacionDTO dto = new ProductopresentacionDTO();
+
+        dto.setId(producto.getIdProducto());
+        dto.setNombre(producto.getNombre());
+        dto.setPrecio(producto.getPrecio());
+        dto.setDescripcion(producto.getDescripcion());
+        dto.setMarca(producto.getMarca()); // 👈 aquí
+        dto.setCategoria(
+                producto.getCategoria() != null ? producto.getCategoria().getNombre() : null
+        );
+        dto.setImagen(imagenPrincipal);
+
+        return dto;
+    }
+
+
 }
