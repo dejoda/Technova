@@ -53,8 +53,6 @@ public class ProductoController {
     /*ARCHIVOS USADOR --> ProductoController,ProductoMapper,ProductoRepository,ProductoServiceImpl,
                             ProductoService,ProductoDetalleDTO,ProductoImagen,ProductoCaracteristica,Producto*/
 
-
-
     //Obtener Productos por Categoria
 
     @GetMapping("/categoria/{id}")
@@ -66,7 +64,6 @@ public class ProductoController {
     ///productos/presentacion?categoria=Laptops
     /// /productos/presentacion?marca=ASUS
     /// /productos/presentacion?minPrecio=2000&maxPrecio=4000
-    ///
     @GetMapping("/presentacion")
     public List<ProductopresentacionDTO> listarProductos(
             @RequestParam(required = false) String categoria,
@@ -80,10 +77,6 @@ public class ProductoController {
                 categoria, marca, minPrecio, maxPrecio, nombre
         );
     }
-
-
-
-
 
     @GetMapping("/marcas")
     public List<String> listarMarcas() {
