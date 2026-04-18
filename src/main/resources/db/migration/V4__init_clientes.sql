@@ -3,7 +3,9 @@ CREATE TABLE cliente (
                          nombre VARCHAR(100),
                          apellido VARCHAR(100),
                          correo VARCHAR(150) UNIQUE,
-                         telefono VARCHAR(20)
+                         telefono VARCHAR(20),
+                         usuario_id INT UNIQUE,
+                         FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
 CREATE TABLE direccion (
